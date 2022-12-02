@@ -14,6 +14,10 @@ submitting PRs to your OWN repo
 
 ## Requirements:
 
+> **Note**
+> This project uses volta, so please [set it up](https://docs.volta.sh/guide/getting-started). Also, read: [Why use Volta?](https://docs.volta.sh/guide/#why-volta)
+
+
 Ensure that you follow TDD approach to writing your code.
 The tests are available and marked as `skip`. Enable your tests by converting the
 `skip` into `test`
