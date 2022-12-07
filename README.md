@@ -8,8 +8,8 @@ Clone this repo and ensure that you are following [Git Flow](https://www.atlassi
 submitting PRs to your OWN repo
 
 ## To Do
-- [ ] Setup testing framework
-- [ ] Add tests
+- [ X ] Setup testing framework
+- [ X ] Add tests
 - [ ] Setup GitHub actions
 
 ## Requirements:
@@ -26,7 +26,7 @@ Ensure that your milestone tests are passing, before submitting the PR
 
 ### Milestone `Tall`
 
-- [ ] Create a controlled component input box
+- [ X ] Create a controlled component input box
 - [ ] Create a composed sign up component using the input box components
 - [ ] Perform validations on the input to enable/disable the Next step button
 
