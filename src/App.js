@@ -1,8 +1,10 @@
 import './App.css';
+import StarbucksInput from '../src/components/starbucks-input';
 
 function App() {
   return (
     <div className="App">
+    <StarbucksInput />
       <header className="App-header">
         <p>
           Edit <code>src/App.js</code> and save to reload.
