@@ -1,4 +1,5 @@
 import { fireEvent, render, screen } from "@testing-library/react";
+import userEvent from "@testing-library/user-event";
 import Form from "./index";
 
 describe("signup component tests", () => {
@@ -12,7 +13,7 @@ describe("signup component tests", () => {
     render(<Form schema={schema} />);
 
     // Act
-    const fullNameInput = screen.getByRole("textbox", { name: /fullnaame/i });
+    const fullNameInput = screen.getByRole("textbox", { name: /fullname/i });
     const mobileInput = screen.getByRole("textbox", { name: /mobile/i });
 
     // Assert
@@ -35,7 +36,7 @@ describe("signup component tests", () => {
     render(<Form schema={schema} initialValues={initialValues} />);
 
     // Act
-    const fullNameInput = screen.getByRole("textbox", { name: /fullnaame/i });
+    const fullNameInput = screen.getByRole("textbox", { name: /fullname/i });
     const mobileInput = screen.getByRole("textbox", { name: /mobile/i });
     const email = screen.getByRole("textbox", { name: /email/i });
 
@@ -52,19 +53,23 @@ describe("signup component tests", () => {
       { name: "mobile", label: "Mobile", required: true },
     ];
     const initialValues = [{ name: "fullname", defaultValue: "shmbajaj" }];
-    const onSubmit = jest.fn();
+    const onFormSubmit = jest.fn();
 
     render(
-      <Form schema={schema} initialValues={initialValues} onSubmit={onSubmit} />
+      <Form
+        schema={schema}
+        initialValues={initialValues}
+        onSubmit={onFormSubmit}
+      />
     );
 
     // Act
-    const submit = screen.getByText(/submit/i);
+    const submit = screen.getByRole("button", { name: /submit/i });
 
     fireEvent.click(submit);
 
     // Assert
-    expect(onSubmit).not.toHaveBeenCalled();
+    expect(onFormSubmit).toHaveBeenCalledTimes(0);
   });
 
   test("form responds on-submit", () => {
@@ -82,24 +87,24 @@ describe("signup component tests", () => {
 
     // Act
     const mobileInput = screen.getByRole("textbox", { name: /mobile/i });
-    const submit = screen.getByText(/submit/i);
+    const submit = screen.getByRole("button", { name: /submit/i });
 
     fireEvent.change(mobileInput, { target: { value: "00" } });
-    fireEvent.click(submit);
+    fireEvent.submit(submit);
 
     // Assert
     expect(onSubmit).toHaveBeenCalledTimes(1);
   });
 
-  test("form state updates with updated input", () => {
+  test("form state updates with updated input", async () => {
     // Asssemble
-    const onSubmit = jest.fn();
+    const onFormSubmit = jest.fn();
     const schema = [
-      { name: "fullname", label: "FullName" },
+      { name: "fullName", label: "FullName" },
       { name: "mobile", label: "Mobile" },
     ];
     const initialValues = [
-      { name: "fullname", defaultValue: "shm" },
+      { name: "fullName", defaultValue: "shm" },
       { name: "mobile", defaultValue: "91" },
     ];
     const expectedFullName = `shmbajaj`;
@@ -109,17 +114,26 @@ describe("signup component tests", () => {
       mobile: expectedMobile,
     };
 
-    render(<Form schema={schema} initialValues={initialValues} />);
+    render(
+      <Form
+        schema={schema}
+        initialValues={initialValues}
+        onSubmit={onFormSubmit}
+      />
+    );
 
     // Act
-    const fullNameInput = screen.getByRole("textbox", { name: /fullnaame/i });
+    const fullNameInput = screen.getByRole("textbox", { name: /fullname/i });
     const mobileInput = screen.getByRole("textbox", { name: /mobile/i });
+    const submit = screen.getByRole("button", { name: /submit/i });
 
-    fireEvent.change(fullNameInput, { target: { value: "bajaj" } });
-    fireEvent.change(mobileInput, { target: { value: "00" } });
+    await userEvent.type(mobileInput, "00");
+    await userEvent.type(fullNameInput, "bajaj");
+
+    fireEvent.submit(submit);
 
     // Assert
-    expect(onSubmit).toHaveBeenCalledTimes(1);
-    expect(onSubmit).toHaveBeenCalledWith(expectedFormDataObject);
+    expect(onFormSubmit).toHaveBeenCalledTimes(1);
+    expect(onFormSubmit).toHaveBeenCalledWith(expectedFormDataObject);
   });
 });
