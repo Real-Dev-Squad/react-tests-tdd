@@ -1,21 +1,22 @@
 export default function StarbucksInput({
   name,
-  onChange: onValueChange,
-  value,
+  label,
   error,
+  onChange: onValueChange,
+  ...props
 }) {
-  if (error) return <span>{error}</span>;
   function onChange(event) {
     if (!onValueChange) return;
-    const value = event.target.value;
+    const { value } = event.target;
     onValueChange(value);
   }
   return (
-    <input
-      name={name}
-      aria-label={name}
-      onChange={onChange}
-      defaultValue={value}
-    />
+    <div>
+      <label>
+        {label}
+        <input name={name} aria-label={name} onChange={onChange} {...props} />
+      </label>
+      {error && <p>{error}</p>}
+    </div>
   );
 }
