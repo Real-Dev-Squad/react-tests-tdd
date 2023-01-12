@@ -2,6 +2,7 @@ export default function StarbucksInput({
   name,
   label,
   error,
+  show = true,
   onChange: onValueChange,
   ...props
 }) {
@@ -10,6 +11,7 @@ export default function StarbucksInput({
     const { value } = event.target;
     onValueChange(value);
   }
+  if (!show) return null;
   return (
     <div>
       <label>
