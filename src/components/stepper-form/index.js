@@ -1,10 +1,5 @@
 import { ERROR_DEFAULT_VALUE } from "./constants";
-import {
-  getDefaultValues,
-  getInitialValues,
-  getSubmitButtonText,
-  getButtonType,
-} from "./helper";
+import { getDefaultValues, getInitialValues } from "./helper";
 import StarbucksInput from "../starbucks-input/index";
 import { useState } from "react";
 
@@ -27,9 +22,13 @@ export default function StepperInputsForm({
   const defaultValues = getDefaultValues(schema);
   const mergedInitialValues = getInitialValues(initialValues, defaultValues);
   //INFO: consistent with zero-based index
-  const MAX_INPUTS = schema.length - 1;
+  const validInputsInitialValue = schema.reduce(
+    (acc, value) => ({ ...acc, [value.name]: false }),
+    {}
+  );
   const [error, setError] = useState(ERROR_DEFAULT_VALUE);
   const [inputStep, setInputStep] = useState(0);
+  const [validInputs, setValidInputs] = useState(validInputsInitialValue);
   function onSubmit(event) {
     event.preventDefault();
     clearError();
@@ -40,8 +39,31 @@ export default function StepperInputsForm({
     clearError();
     setInputStep((prevInputStep) => prevInputStep - 1);
   }
+  function onNext() {
+    clearError();
+    setInputStep((prevInputStep) => prevInputStep + 1);
+  }
   function clearError() {
     setError(ERROR_DEFAULT_VALUE);
+  }
+  function onChange(value) {
+    const { condition, name } = schema[inputStep];
+    if (validInputs[name]) return;
+    if (!condition.required) {
+      setValidInputs((prevValidInputs) => ({
+        ...prevValidInputs,
+        [name]: true,
+      }));
+      return;
+    }
+    const length = value.length;
+    if (length >= condition.minLength && length <= condition.maxLength) {
+      setValidInputs((prevValidInputs) => ({
+        ...prevValidInputs,
+        [name]: true,
+      }));
+      return;
+    }
   }
   return (
     <form onSubmit={onSubmit}>
@@ -51,22 +73,27 @@ export default function StepperInputsForm({
             {...value}
             key={value.name}
             show={inputStep == index}
+            onChange={onChange}
             defaultValue={mergedInitialValues[value.name]}
           />
         ))}
       </section>
-      <button
-        onClick={onPrevious}
-        type="button"
-        aria-label="previous"
-        disabled={inputStep == 0}>
-        Prev
-      </button>
-      <button
-        type={getButtonType(inputStep, MAX_INPUTS)}
-        aria-label={getSubmitButtonText(inputStep, MAX_INPUTS)}>
-        {getSubmitButtonText(inputStep, MAX_INPUTS)}
-      </button>
+      <section>
+        <button
+          onClick={onPrevious}
+          type="button"
+          aria-label="previous"
+          disabled={inputStep == 0}>
+          Prev
+        </button>
+        <button
+          type="button"
+          aria-label="next"
+          onClick={onNext}
+          disabled={!validInputs[schema[inputStep]?.name]}>
+          Next
+        </button>
+      </section>
       {error.hasError && (
         <section>
           <small>{error.message}</small>

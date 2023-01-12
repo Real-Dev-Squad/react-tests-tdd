@@ -11,9 +11,8 @@ export default function StarbucksInput({
     const { value } = event.target;
     onValueChange(value);
   }
-  if (!show) return null;
   return (
-    <div>
+    <div style={{ display: show ? "block" : "none" }}>
       <label>
         {label}
         <input name={name} aria-label={name} onChange={onChange} {...props} />
