@@ -144,5 +144,92 @@ describe("Perform validations on the input to enable or disable the Next step bu
     });
     expect(mobileInput).toBeInTheDocument();
   });
-  test("it renders and validates and submits stepper form", () => {});
+  test("it renders and validates and submits stepper form", async () => {
+    //Assemble
+    const schema = [
+      {
+        name: "fullName",
+        label: "FullName",
+        condition: { required: true, minLength: 3, maxLength: 21 },
+      },
+      {
+        name: "mobileNumber",
+        label: "MobileNumber",
+        type: "number",
+        condition: { required: false, pattern: "(91)?[789]\\d{9}" },
+      },
+      {
+        name: "userName",
+        label: "UserName",
+        condition: { required: true, pattern: "^[a-z][a-z0-9]{3,16}$" },
+      },
+      {
+        name: "consent",
+        label: "Give consent to collect data",
+        type: "checkbox",
+      },
+    ];
+    const initialValues = {
+      fullName: "Shubham Bajaj",
+      mobileNumber: "9195195",
+      consent: false,
+    };
+    const onSubmit = jest.fn();
+    render(
+      <StepperInputsForm
+        schema={schema}
+        initialValues={initialValues}
+        onSubmit={onSubmit}
+      />
+    );
+
+    //Act
+    const previous = screen.queryByRole("button", { name: /previous/i });
+    let next = screen.queryByRole("button", { name: /next/i });
+    let fullName = screen.queryByRole("textbox", { name: /fullName/i });
+    let mobile;
+    let userName;
+    let consent;
+    let submit;
+
+    //Assert
+    expect(previous).toBeDisabled();
+    expect(next).not.toBeDisabled();
+    expect(fullName).toBeInTheDocument();
+
+    fireEvent.click(next);
+    fireEvent.click(next);
+
+    mobile = screen.queryByRole("spinbutton", { name: /mobileNumber/i });
+
+    expect(mobile).not.toBeInTheDocument();
+    expect(previous).not.toBeDisabled();
+    fireEvent.click(previous);
+
+    mobile = screen.queryByRole("spinbutton", { name: /mobileNumber/i });
+
+    expect(mobile).toBeInTheDocument();
+    fireEvent.click(next);
+
+    userName = screen.queryByRole("textbox", { name: /userName/i });
+
+    expect(userName).toBeInTheDocument();
+
+    await userEvent.type(userName, "shmbajaj");
+    fireEvent.click(next);
+
+    consent = screen.queryByRole("checkbox", { name: /consent/i });
+    submit = screen.queryByRole("button", { name: /submit/i });
+
+    fireEvent.click(consent);
+    fireEvent.click(submit);
+
+    expect(onSubmit).toHaveBeenCalledTimes(1);
+    expect(onSubmit).toHaveBeenCalledWith({
+      fullName: "Shubham Bajaj",
+      userName: "shmbajaj",
+      mobileNumber: "9195195",
+      consent: "on",
+    });
+  });
 });
