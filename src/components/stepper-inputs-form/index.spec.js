@@ -2,6 +2,8 @@ import StepperInputsForm from "./index.js";
 import { fireEvent, render, screen } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 
+// REFFERENCE: https://www.taniarascia.com/schema-based-form-system/
+
 describe("Perform validations on the input to enable or disable the Next step button", () => {
   test("it renders form with initial input, previous and next buttons", () => {
     //Assemble
