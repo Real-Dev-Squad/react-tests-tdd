@@ -1,5 +1,9 @@
 import { ERROR_DEFAULT_VALUE } from "./constants";
-import { getDefaultValues, getInitialValues } from "./helper";
+import {
+  getDefaultValues,
+  getInitialValues,
+  getSubmitButtonText,
+} from "./helper";
 import StarbucksInput from "../starbucks-input/index";
 import { useState } from "react";
 
@@ -26,6 +30,7 @@ export default function StepperInputsForm({
     (acc, value) => ({ ...acc, [value.name]: false }),
     {}
   );
+  const MAX_INPUTS = schema.length - 1;
   const [error, setError] = useState(ERROR_DEFAULT_VALUE);
   const [inputStep, setInputStep] = useState(0);
   const [validInputs, setValidInputs] = useState(validInputsInitialValue);
@@ -46,10 +51,11 @@ export default function StepperInputsForm({
   function clearError() {
     setError(ERROR_DEFAULT_VALUE);
   }
+  //TODO: write a strong onChange handler
+  //INFO: logic written for time-being to learn tdd
   function onChange(value) {
     const { condition, name } = schema[inputStep];
-    if (validInputs[name]) return;
-    if (!condition.required) {
+    if (!condition?.required) {
       setValidInputs((prevValidInputs) => ({
         ...prevValidInputs,
         [name]: true,
@@ -64,10 +70,22 @@ export default function StepperInputsForm({
       }));
       return;
     }
+    if (condition?.pattern) {
+      const regex = new RegExp(condition.pattern);
+      const isValid = regex.test(value);
+      if (!isValid) return;
+      setValidInputs((prevValidInputs) => ({
+        ...prevValidInputs,
+        [name]: true,
+      }));
+      return;
+    }
   }
   return (
     <form onSubmit={onSubmit}>
       <section>
+        {/* TODO: don't pass condition prop */}
+        {/* TODO: remove index-based key */}
         {schema.map((value, index) => (
           <StarbucksInput
             {...value}
@@ -87,11 +105,11 @@ export default function StepperInputsForm({
           Prev
         </button>
         <button
-          type="button"
-          aria-label="next"
+          type={inputStep == MAX_INPUTS ? "submit" : "button"}
+          aria-label={getSubmitButtonText(inputStep, MAX_INPUTS)}
           onClick={onNext}
           disabled={!validInputs[schema[inputStep]?.name]}>
-          Next
+          {getSubmitButtonText(inputStep, MAX_INPUTS)}
         </button>
       </section>
       {error.hasError && (

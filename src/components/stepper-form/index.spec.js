@@ -27,7 +27,7 @@ describe("Perform validations on the input to enable or disable the Next step bu
     expect(userNameInput).toBeNull();
     expect(fullNameInput).toHaveValue("Shubham Bajaj");
   });
-  test("it validates form input andd enables next and previous button", async () => {
+  test("it validates form input and enables next and previous button", async () => {
     //Assemble
     const schema = [
       {
@@ -60,9 +60,89 @@ describe("Perform validations on the input to enable or disable the Next step bu
     fireEvent.click(next);
     expect(previous).not.toBeDisabled();
   });
-  test("it invalidates initial step or form inputs and check is previous button disabled", () => {});
-  test("it renders stepper-form and validates next step or form inputs and enables next step button", () => {});
-  test("it renders stepper-form and invalidates next step or form inputs and disables next step button and check is previous button disabled", () => {});
-  test("it renders transition between forms or steps", () => {});
-  test("it renders and validates stepper form", () => {});
+  test("it validates transition between inputs using next and previous button", async () => {
+    //Assemble
+    //INFO: cannot use browser validations because of jest-dom
+    const schema = [
+      {
+        name: "fullName",
+        label: "FullName",
+        condition: { required: true, minLength: 3, maxLength: 21 },
+      },
+      {
+        name: "mobileNumber",
+        label: "MobileNumber",
+        type: "number",
+        condition: { required: true, pattern: "(91)?[789]\\d{9}" },
+      },
+      {
+        name: "userName",
+        label: "UserName",
+        condition: { required: true, pattern: "^[a-z][a-z0-9]{3,16}$" },
+      },
+    ];
+    render(<StepperInputsForm schema={schema} />);
+
+    //Act
+    const previous = screen.getByRole("button", { name: /previous/i });
+    let next = screen.getByRole("button", { name: /next/i });
+    let fullNameInput = screen.queryByRole("textbox", { name: /fullName/i });
+    let mobileInput = screen.queryByRole("spinbutton", {
+      name: /mobileNumber/i,
+    });
+    let userNameInput;
+    let submit;
+
+    //Assert
+    expect(previous).toBeDisabled();
+    expect(next).toBeDisabled();
+    expect(fullNameInput).toHaveValue("");
+
+    await userEvent.type(fullNameInput, "Shubham Pawan Bajaj  ");
+
+    expect(next).not.toBeDisabled();
+
+    fireEvent.click(next);
+
+    expect(previous).not.toBeDisabled();
+
+    fullNameInput = screen.queryByRole("textbox", { name: /fullName/i });
+
+    expect(fullNameInput).toBeNull();
+
+    mobileInput = screen.queryByRole("spinbutton", {
+      name: /mobileNumber/i,
+    });
+
+    expect(mobileInput).not.toBeNull();
+    expect(next).toBeDisabled();
+
+    await userEvent.type(mobileInput, "918950095195");
+
+    expect(next).not.toBeDisabled();
+    expect(previous).not.toBeDisabled();
+
+    fireEvent.click(next);
+
+    userNameInput = screen.queryByRole("textbox", { name: /userName/i });
+    mobileInput = screen.queryByRole("spinbutton", {
+      name: /mobileNumber/i,
+    });
+    next = screen.queryByRole("button", { name: /next/i });
+
+    expect(mobileInput).not.toBeInTheDocument();
+    expect(userNameInput).toBeInTheDocument();
+    expect(next).not.toBeInTheDocument();
+
+    submit = screen.queryByRole("button", { name: /submit/i });
+
+    expect(submit).toBeInTheDocument();
+
+    fireEvent.click(previous);
+    mobileInput = screen.queryByRole("spinbutton", {
+      name: /mobileNumber/i,
+    });
+    expect(mobileInput).toBeInTheDocument();
+  });
+  test("it renders and validates and submits stepper form", () => {});
 });
