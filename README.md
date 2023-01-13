@@ -4,19 +4,19 @@
 
 Create a simple react app that has tests working
 
-Clone this repo and ensure that you are following [Git Flow](https://www.atlassian.com/git/tutorials/comparing-workflows/gitflow-workflow) convention to 
+Clone this repo and ensure that you are following [Git Flow](https://www.atlassian.com/git/tutorials/comparing-workflows/gitflow-workflow) convention to
 submitting PRs to your OWN repo
 
 ## To Do
-- [ X ] Setup testing framework
-- [ X ] Add tests
+
+- [x] Setup testing framework
+- [x] Add tests
 - [ ] Setup GitHub actions
 
 ## Requirements:
 
 > **Note**
 > This project uses volta, so please [set it up](https://docs.volta.sh/guide/getting-started). Also, read: [Why use Volta?](https://docs.volta.sh/guide/#why-volta)
-
 
 Ensure that you follow TDD approach to writing your code.
 The tests are available and marked as `skip`. Enable your tests by converting the
@@ -26,9 +26,9 @@ Ensure that your milestone tests are passing, before submitting the PR
 
 ### Milestone `Tall`
 
-- [ X ] Create a controlled component input box
-- [ ] Create a composed sign up component using the input box components
-- [ ] Perform validations on the input to enable/disable the Next step button
+- [x] Create a controlled component input box
+- [x] Create a composed sign up component using the input box components
+- [x] Perform validations on the input to enable/disable the Next step button
 
 ### Milestone `Grande`
 
@@ -56,7 +56,6 @@ Trenta - Biggest bucket
 
 - Testing Overview - [Official Docs](https://reactjs.org/docs/testing.html)
 
-
-##  What we will be developing?
+## What we will be developing?
 
 A guide for beginners to understand and learn Testing in ReactJS Project. This would be a detail documentation on Testing.
