@@ -2,7 +2,7 @@ import StarbucksInput from './index.js';
 import { render, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event'
 
-describe.skip('starbucks input tests', () => {
+describe('starbucks input tests', () => {
   test('it renders input component', async () => {
     // Assemble
     const elName = 'nickname';
